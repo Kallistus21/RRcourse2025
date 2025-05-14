@@ -1,0 +1,61 @@
+---
+title: "Metaanalysis assignment"
+author: "Piotr Bugajski"
+date: today
+format:  
+  html:
+    theme: lumen
+    toc: true
+    toc_float: true
+title-block-banner: true
+execute:
+  echo: fenced
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| label = "setup",
+#| include = FALSE
+library(meta)
+library(metafor)
+library(dplyr)
+#setwd("")
+```
+
+```{r}
+library(readxl) a<-read_excel("metaanalysis_data.xlsx")
+```
+
+1.  **Combine the effects**
+
+```{r}
+m <- metacont( n.e = N_boys, mean.e = Mean_boys_play_male, sd.e = SD_boys_play_male, n.c = N_girls, mean.c = Mean_girls_play_male, sd.c = SD_girls_play_male, studlab = Study, data = a, sm = "MD", comb.fixed = FALSE,comb.random = TRUE, hakn = TRUE)
+```
+
+```{r}
+summary(m)
+```
+
+2.  **Create a Funnel Plot**
+
+```{r}
+funnel(m, studlab = TRUE)
+```
+
+3.  **check if methods / quality affect the results**
+
+```{r}
+metareg_quality <- metareg(m, ~ NOS score) summary(metareg_quality)
+```
+
+**no, p value is 0.0743**
+
+4.  **Does Author Gender Affect the Results?**
+
+```{r}
+metareg_gender <- metareg(m, ~ Female authors) summary(metareg_gender) 
+```
+
+**almost, the p value is 0.0599**
